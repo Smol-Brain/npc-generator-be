@@ -1,18 +1,15 @@
 package main
 
 import (
-	"npc-generator-be/app"
-	"npc-generator-be/config"
-	"npc-generator-be/global"
+	"npc-generator-be/cmd/app"
+	"npc-generator-be/internal/config"
 )
 
 func main() {
 	// Load config variables before initializing other components
-	// pwd, _ := os.Getwd()
-	// fmt.Println(pwd)
-	global.Conf, _ = config.InitializeConfig()
+	conf := config.InitializeConfig()
 
 	// Set up database, server
-	app.InitializeDB()
-	app.InitializeRoutes()
+	db := app.InitializeDB(conf)
+	app.InitializeRoutes(conf, db)
 }
