@@ -2,7 +2,7 @@ Backend API for NPC generation
 
 # Set up instructions:
 
-0. `go mod tidy` and install dependencies
+0. `go mod tidy` to install dependencies
 1. Get local postgres instance running
 1. `go run .` and navigate to `localhost:8000` for list of commands.
 
