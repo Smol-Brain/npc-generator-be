@@ -11,5 +11,5 @@ func main() {
 
 	// Set up database, server
 	db := app.InitializeDB(conf)
-	app.InitializeRoutes(conf, db)
+	app.InitializeServer(conf, db)
 }

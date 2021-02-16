@@ -9,9 +9,9 @@ import (
 
 // User defines the current application user (likely a DM)
 type User struct {
-	id    string
-	name  string
-	email string
+	ID    string
+	Name  string
+	Email string
 }
 
 // Route sets up endpoint routing for users

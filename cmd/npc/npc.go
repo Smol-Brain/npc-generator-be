@@ -9,16 +9,21 @@ import (
 
 // Npc defines a non-player character's traits
 type Npc struct {
-	firstName, lastName                           string
-	gender, pronouns                              string
-	height                                        string
-	hook                                          string
-	job                                           string
-	languages                                     []string
-	lifeStage                                     string
-	negativeTraits, neutralTraits, positiveTraits []string
-	race                                          string
-	wealth                                        string
+	ID             string
+	FirstName      string
+	LastName       string
+	Gender         string
+	Pronouns       string
+	Height         string
+	Hook           string
+	Job            string
+	Languages      []string `gorm:"type:varchar(64)[]"`
+	LifeStage      string
+	NegativeTraits []string `gorm:"type:varchar(64)[]"`
+	PositiveTraits []string `gorm:"type:varchar(64)[]"`
+	NeutralTraits  []string `gorm:"type:varchar(64)[]"`
+	Race           string
+	Wealth         string
 }
 
 // Route sets up endpoint routing for NPCs

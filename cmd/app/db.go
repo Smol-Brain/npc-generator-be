@@ -3,7 +3,9 @@ package app
 import (
 	"fmt"
 	"log"
+	"npc-generator-be/cmd/npc"
 	"npc-generator-be/internal/config"
+	"os/user"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -26,6 +28,9 @@ func InitializeDB(config config.Config) (db *gorm.DB) {
 	}
 
 	log.Println("Connected to Postgres")
+
+	db.AutoMigrate(&user.User{})
+	db.AutoMigrate(&npc.Npc{})
 
 	return
 }
