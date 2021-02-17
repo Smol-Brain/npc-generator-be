@@ -13,7 +13,7 @@ import (
 // InitializeDB sets up database connection
 func InitializeDB(config Config) (db *gorm.DB) {
 	dsn := fmt.Sprintf(
-		"user=%s password=%s dbname=%s host=%s port=%s sslmode=disable",
+		"user=%s password=%s dbname=%s host=%s port=%s",
 		config.DBUSER,
 		config.DBPASSWORD,
 		config.DBNAME,
