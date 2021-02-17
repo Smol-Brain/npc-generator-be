@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"npc-generator-be/npc"
+	"github/Smol-Brain/npc-generator-be/npc"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

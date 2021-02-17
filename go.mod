@@ -1,4 +1,4 @@
-module npc-generator-be
+module github/Smol-Brain/npc-generator-be
 
 go 1.15
 

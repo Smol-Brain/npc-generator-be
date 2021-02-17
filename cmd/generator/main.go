@@ -1,7 +1,7 @@
 package main
 
 import (
-	"npc-generator-be/app"
+	"github/Smol-Brain/npc-generator-be/app"
 )
 
 func main() {

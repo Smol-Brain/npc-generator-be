@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github/Smol-Brain/npc-generator-be/npc"
 	"log"
 	"net/http"
 	"time"
@@ -8,8 +9,6 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-
-	"npc-generator-be/npc"
 )
 
 // InitializeServer sets up engine and routing for server requests
