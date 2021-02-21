@@ -20,47 +20,33 @@ type Config struct {
 }
 
 // InitializeConfig loads configuration values
+// TODO: Consider replacing with https://github.com/kelseyhightower/envconfig
 func InitializeConfig() (config Config) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
+	// Heroku has env vars defined instead of a configuration file
+	if env := os.Getenv("ENVIRONMENT"); env == "Integration" {
+		config.PORT = os.Getenv("PORT")
+		config.DBHOST = os.Getenv("DBHOST")
+		config.DBNAME = os.Getenv("DBNAME")
+		config.DBPASSWORD = os.Getenv("DBPASSWORD")
+		config.DBPORT = os.Getenv("DBPORT")
+		config.DBUSER = os.Getenv("DBUSER")
+	} else {
+		viper.SetConfigName("config")
+		viper.SetConfigType("env")
+		viper.AddConfigPath(".")
 
-	// Allow env vars to take precedence
-	viper.AutomaticEnv()
+		// Allow env vars to take precedence
+		viper.AutomaticEnv()
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic("Failed to read configuration file: " + err.Error())
-	}
+		err := viper.ReadInConfig()
+		if err != nil {
+			panic("Failed to read configuration file: " + err.Error())
+		}
 
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		panic("Failed to unmarshal configuration: " + err.Error())
-	}
-
-	// Hacky, overriding with env vars for now to deal with Heroku issue
-	if port := os.Getenv("PORT"); port != "" {
-		config.PORT = port
-	}
-
-	if dbHost := os.Getenv("DBHOST"); dbHost != "" {
-		config.DBHOST = dbHost
-	}
-
-	if dbName := os.Getenv("DBNAME"); dbName != "" {
-		config.DBNAME = dbName
-	}
-
-	if dbPassword := os.Getenv("DBPASSWORD"); dbPassword != "" {
-		config.DBPASSWORD = dbPassword
-	}
-
-	if dbPort := os.Getenv("DBPORT"); dbPort != "" {
-		config.DBPORT = dbPort
-	}
-
-	if dbUser := os.Getenv("DBUSER"); dbUser != "" {
-		config.DBUSER = dbUser
+		err = viper.Unmarshal(&config)
+		if err != nil {
+			panic("Failed to unmarshal configuration: " + err.Error())
+		}
 	}
 
 	return
