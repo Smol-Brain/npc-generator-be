@@ -1,10 +1,12 @@
 package app
 
 import (
+	"github/Smol-Brain/npc-generator-be/npc"
 	"log"
 	"net/http"
-	"npc-generator-be/npc"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -18,6 +20,18 @@ func InitializeServer(config Config, db *gorm.DB) (router *gin.Engine) {
 		c.Set("db", db)
 		c.Next()
 	})
+
+	// Enable CORS for frontend
+	router.Use(cors.New(
+		cors.Config{
+			AllowOrigins:     []string{"https://npc-generator.netlify.com"},
+			AllowMethods:     []string{"GET", "POST"},
+			AllowHeaders:     []string{"Origin"},
+			ExposeHeaders:    []string{"Content-Length"},
+			AllowCredentials: true,
+			MaxAge:           12 * time.Hour,
+		},
+	))
 
 	// Defaulting root url to list of commands for now
 	router.GET("/", func(c *gin.Context) {
