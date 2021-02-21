@@ -4,49 +4,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lucsky/cuid"
 	"gorm.io/gorm"
 
-	"github.com/lucsky/cuid"
+	generator "github/Smol-Brain/npc-generator-be"
 )
-
-// Npc defines a non-player character's traits
-type Npc struct {
-	ID             string
-	UserID         string
-	FirstName      string
-	LastName       string
-	Gender         string
-	Pronouns       string
-	Height         string
-	Hook           string
-	Job            string
-	Languages      []string `gorm:"type:varchar(64)[]"`
-	LifeStage      string
-	NegativeTraits []string `gorm:"type:varchar(64)[]"`
-	PositiveTraits []string `gorm:"type:varchar(64)[]"`
-	NeutralTraits  []string `gorm:"type:varchar(64)[]"`
-	Race           string
-	Wealth         string
-}
-
-// CreateNpcInput defines the create request body
-type CreateNpcInput struct {
-	UserID         string `binding:"required"`
-	FirstName      string `binding:"required"`
-	LastName       string `binding:"required"`
-	Gender         string
-	Pronouns       string
-	Height         string
-	Hook           string   `binding:"required"`
-	Job            string   `binding:"required"`
-	Languages      []string `binding:"required"`
-	LifeStage      string
-	NegativeTraits []string
-	PositiveTraits []string
-	NeutralTraits  []string
-	Race           string `binding:"required"`
-	Wealth         string
-}
 
 // Route sets up endpoint routing for NPCs
 func Route(router *gin.Engine) {
@@ -62,7 +24,7 @@ func Route(router *gin.Engine) {
 func getMany(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
-	var npcs []Npc
+	var npcs []generator.Npc
 	db.Find(&npcs)
 
 	c.JSON(http.StatusOK, gin.H{"data": npcs})
@@ -71,7 +33,7 @@ func getMany(c *gin.Context) {
 func getOne(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
-	var npc Npc
+	var npc generator.Npc
 	if err := db.Where("id = ?", c.Param("id")).First(&npc).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "NPC not found"})
 		return
@@ -83,30 +45,14 @@ func getOne(c *gin.Context) {
 func create(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
-	var requestBody CreateNpcInput
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
+	var npc generator.Npc
+	if err := c.ShouldBindJSON(&npc); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"err": err.Error()})
 		return
 	}
 
-	npc := Npc{
-		ID:             "npc_" + cuid.New(), // auto-generate a cuid for now, no support for user-defined ids
-		UserID:         requestBody.UserID,
-		FirstName:      requestBody.FirstName,
-		LastName:       requestBody.LastName,
-		Gender:         requestBody.Gender,
-		Pronouns:       requestBody.Pronouns,
-		Height:         requestBody.Height,
-		Hook:           requestBody.Hook,
-		Job:            requestBody.Job,
-		Languages:      requestBody.Languages,
-		LifeStage:      requestBody.LifeStage,
-		NegativeTraits: requestBody.NegativeTraits,
-		PositiveTraits: requestBody.PositiveTraits,
-		NeutralTraits:  requestBody.NeutralTraits,
-		Race:           requestBody.Race,
-		Wealth:         requestBody.Wealth,
-	}
+	// Auto-assign id regardless if present in request body
+	npc.ID = "npc_" + cuid.New()
 
 	db.Create(&npc)
 
@@ -114,5 +60,5 @@ func create(c *gin.Context) {
 }
 
 func generate(c *gin.Context) {
-	return
+	c.JSON(http.StatusOK, gin.H{"data": generateNpc()})
 }

@@ -7,11 +7,12 @@ Backend API for NPC generation
 2. Get local postgres instance running
 3. `go run ./cmd/generator/main.go` and navigate to `localhost:8000` for list of commands
 
+Alternatively, this is viewable on npc-generator-be.heroku.app
+
 # Todo:
 
 - Replace local postgres with Docker container
 - CI pipeline with Travis
-- Deploy this somewhere...
 
 
 # Notes:

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github/Smol-Brain/npc-generator-be/npc"
+	generator "github/Smol-Brain/npc-generator-be"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,7 +28,7 @@ func InitializeDB(config Config) (db *gorm.DB) {
 
 	log.Println("Connected to Postgres")
 
-	db.AutoMigrate(&npc.Npc{})
+	db.AutoMigrate(&generator.Npc{})
 
 	return
 }
