@@ -30,7 +30,7 @@ func InitializeServer(config Config, db *gorm.DB) (router *gin.Engine) {
 			GET /npcs - Retrieve all npcs
 			GET /npcs/:id - Retrieve specific npc
 			POST /npcs - Create an npc
-			POST /npcs/generate - Generate but do not persist NPCS  (optional int req.body.npc_amount generates x npcs)
+			POST /npcs/generate - Generate but do not persist NPCS
 		`)
 	})
 
@@ -47,6 +47,7 @@ func InitializeServer(config Config, db *gorm.DB) (router *gin.Engine) {
 	return
 }
 
+// Taken from https://github.com/gin-contrib/cors/issues/29#issuecomment-397859488
 func cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
