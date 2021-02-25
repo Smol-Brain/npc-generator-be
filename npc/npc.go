@@ -14,6 +14,7 @@ import (
 func Route(router *gin.Engine) {
 	npc := router.Group("/npcs")
 	{
+		npc.DELETE("/:id", delete)
 		npc.GET("/", getMany)
 		npc.GET("/:id", getOne)
 		npc.POST("/", create)
@@ -54,9 +55,23 @@ func create(c *gin.Context) {
 	// Auto-assign id regardless if present in request body
 	npc.ID = "npc_" + cuid.New()
 
-	db.Create(&npc)
+	if err := db.Create(npc).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Unable to create NPC": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"data": npc})
+}
+
+func delete(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	if err := db.Delete(&generator.Npc{}, c.Param("id")).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Unable to delete NPC": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, "Deleted NPC with id: "+c.Param("id"))
 }
 
 func generate(c *gin.Context) {
