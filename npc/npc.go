@@ -24,11 +24,15 @@ func Route(router *gin.Engine) {
 
 func getMany(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
+	queryParams := c.Request.URL.Query()
 
 	var npcs []generator.Npc
-	db.Find(&npcs)
+	// I couldn't find a good example of Go's spread operator, will look more later
+	db.Where(&generator.Npc{
+		UserID: queryParams.Get("userId"),
+	}).Find(&npcs)
 
-	c.JSON(http.StatusOK, gin.H{"data": npcs})
+	c.JSON(http.StatusOK, gin.H{"data": npcs, "totalCount": len(npcs)})
 }
 
 func getOne(c *gin.Context) {
