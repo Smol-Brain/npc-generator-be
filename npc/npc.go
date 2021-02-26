@@ -66,12 +66,12 @@ func create(c *gin.Context) {
 func delete(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 
-	if err := db.Delete(&generator.Npc{}, c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"Unable to delete NPC": err.Error()})
+	if err := db.Delete(&generator.Npc{}, "id = ?", c.Param("id")).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Unable to delete NPC: " + err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, "Deleted NPC with id: "+c.Param("id"))
+	c.JSON(http.StatusOK, gin.H{"data": "Deleted NPC with id: " + c.Param("id")})
 }
 
 func generate(c *gin.Context) {
