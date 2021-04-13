@@ -2,6 +2,7 @@ package npc
 
 import (
 	generator "github/Smol-Brain/npc-generator-be"
+	wr "github.com/mroth/weightedrand"
 	"log"
 	"math/rand"
 	"os/exec"
@@ -11,25 +12,24 @@ import (
 )
 
 func generateNpc() generator.Npc {
-	rand.Seed(time.Now().Unix())
+	rand.Seed(time.Now().UTC().UnixNano())
 	npc := generator.Npc{}
 
 	// Passing in slices for now as opposed to reading from db or file
 	// TODO: Replace with external sources
-	npc.Gender = generateOneFromChoices([]string{"Male", "Female", "Non-Binary"})
+	npc.Gender = generateWeightedOneFromChoices(wr.Choice{Item: "Male", Weight: 4}, wr.Choice{Item: "Female", Weight: 4}, wr.Choice{Item: "Non-Binary", Weight: 1})
 	npc.Height = generateOneFromChoices([]string{"Tiny", "Short", "Average", "Tall", "Giant"})
 	npc.Languages = generateManyFromChoices([]string{"Dwarvish", "Elvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc"}, 3)
 	npc.LifeStage = generateOneFromChoices([]string{"Young Adult", "Adult", "Elderly", "Ancient"})
 	npc.Race = generateOneFromChoices([]string{"Dragonborn", "Dwarf", "Elf", "Gnome", "Half-Elf", "Half-Orc", "Halfling", "Human", "Tiefling"})
 	npc.Wealth = generateOneFromChoices([]string{"Poor", "Average", "Well-off", "Wealthy"})
 
-	// Tie pronouns and names to gender (for now?)
-	// TODO: Replace with percent likelihoods based on gender (e.g. Females have a 90% chance of She/Her, 10% chance of other pronouns)
+	// Tie pronouns and names to gender
 	if npc.Gender == "Male" {
-		npc.Pronouns = "He/Him"
+		npc.Pronouns = generateWeightedOneFromChoices(wr.Choice{Item: "He/Him", Weight: 4}, wr.Choice{Item: "He/They", Weight: 1})
 		npc.FirstName = generateOneFromFile("./files/names_male.csv")
 	} else if npc.Gender == "Female" {
-		npc.Pronouns = "She/Her"
+		npc.Pronouns = generateWeightedOneFromChoices(wr.Choice{Item: "She/Her", Weight: 4}, wr.Choice{Item: "She/They", Weight: 1})
 		npc.FirstName = generateOneFromFile("./files/names_female.csv")
 	} else if npc.Gender == "Non-Binary" {
 		npc.Pronouns = "They/Them"
@@ -58,6 +58,13 @@ func generateNpc() generator.Npc {
 func generateOneFromChoices(choices []string) string {
 	index := rand.Intn(len(choices))
 	return choices[index]
+}
+
+func generateWeightedOneFromChoices(choices ...wr.Choice) string {
+	chooser, _ := wr.NewChooser(choices)
+
+	result := chooser.Pick().(string)
+	return result
 }
 
 // Return a slice of at most max selections of choices
